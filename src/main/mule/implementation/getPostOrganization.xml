@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="getOrganization" doc:id="43e863db-4b8e-42fc-80b3-044b8bb108b0" >
+		<logger level="INFO" doc:name="Logger" doc:id="654bfa15-5cfa-4dc2-8b31-c7097f034597" />
+		<salesforce:query doc:name="Query" doc:id="6637c7a4-5dd1-4324-89b9-d28498784405" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select Name, Address__c, City__c, State__c, Phone_number__c, Revenue__c, Zip__c from  Organization__c]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="40619f74-cfd0-4d38-92d2-09a76d88f719" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (payload1, indexOfPayload01) -> {
+	Zip: payload1.Zip__c default 0,
+	phoneNumber: payload1.Phone_number__c as Number default 0,
+	organizationName: payload1.Name default "",
+	Address: payload1.Address__c default "",
+	State: payload1.State__c default "",
+	Revenue: payload1.Revenue__c default 0,
+	City: payload1.City__c default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="59e21f0b-e767-449a-a283-627df509148f" />
+	</flow>
+	<flow name="postOrganization" doc:id="0f37b841-d666-4e09-ab35-80ca7c6b37ff" >
+		<logger level="INFO" doc:name="Logger" doc:id="c7076a8b-8bc9-4db8-8fa9-ff618c2f71b5" />
+<!-- [STUDIO:"Create"]		<salesforce:create type="Organization__c" doc:name="Create" doc:id="2ecbdefb-c078-44c2-a27e-3911516d6ca9" config-ref="Salesforce_Config"/> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="76bdb3c1-8ddb-4b84-b172-157321ee0ce2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv
+---
+payload map (payload1, indexOfPayload01) -> {
+	Zip__C: payload1.Zip,
+	Phone_number__c: payload1.phoneNumber as Number,
+	Name: payload1.organizationName ,
+	Address__c: payload1.Address,
+	State__c: payload1.State,
+	Revenue__c: payload1.Revenue,
+	City__c: payload1.City
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create-job-bulk-api-v2 objectType="Organization__c" operation="insert" doc:name="Create job bulk api v 2" doc:id="fc6e57b9-0d73-40f9-87d4-1742bbc9c003" config-ref="Salesforce_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="659c2a4c-4797-4473-814d-3002206b5b8e" message="#[output application/json --- payload]"/>
+	</flow>
+</mule>

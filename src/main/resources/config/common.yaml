@@ -1,0 +1,5 @@
+http:
+ listener:
+   path: "/api/v1/salesforce-sapi/*"
+   console:
+     path: "/console/v1/salesforce-sapi/*"

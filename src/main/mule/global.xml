@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<configuration-properties doc:name="config/common.yaml" doc:id="d50774ac-6ed1-4499-a90c-b048d1093e46" file="config/common.yaml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="2e1b6e0d-7692-42b4-b195-e7dedfc8c1af" file="config/${mule.env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="9e258caa-3e13-4606-866a-6cf1a62f99dd" name="mule.env" value="dev" />
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="5065c150-a41f-4ec6-8433-96a7866bd8c1" >
+		<salesforce:basic-connection username="pirrinki@open-logix.com" password="Valliirrinki@79" securityToken="skTCSwk9j5VKgKc7UTKr8nxy0" />
+	</salesforce:sfdc-config>
+	<apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" doc:id="5ab030d7-5359-4e70-8a33-572fd3ffa952" name="salesforce-sapi-config" api="resource::30cfc3b2-f56b-4391-a360-5b51a8f68ed9:salesforce-sapi:1.0.4:raml:zip:salesforce-sapi.raml"/>
+	<http:listener-config name="salesforce_HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1f73de55-cbf8-480f-becd-cd9bf9693d32" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<api-gateway:autodiscovery apiId="19064088" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="47efba22-943b-49d5-84b1-93af15fd5e8b" flowRef="salesforce-sapi-main" />
+</mule>

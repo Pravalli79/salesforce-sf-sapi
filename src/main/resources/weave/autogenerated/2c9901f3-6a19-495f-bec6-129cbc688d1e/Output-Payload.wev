@@ -1,0 +1,8 @@
+%dw 2.0
+
+type auto_2c9901f3_6a19_495f_bec6_129cbc688d1e_Output_Payload = {
+  jobId: String, 
+  status: "on going" | "failure" | "completed", 
+  _?: Any
+}
+

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="job-d-failureFlow" doc:id="91746120-bc17-407b-91f4-ef218e40b3d5" >
+		<logger level="INFO" doc:name="Logger" doc:id="46769003-f7a0-46fb-a169-5605417098c5" />
+		<salesforce:retrieve-job-failed-results-bulk-v2 doc:name="Retrieve job failed results bulk v 2" doc:id="649f66d9-b6f5-4859-a4b6-54778b774984" config-ref="Salesforce_Config" id="#[vars.jobId]"/>
+		<ee:transform doc:name="Transform Message" doc:id="67aa6434-2772-4e0d-aa58-67b1483b712f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	errorMessage: "failed",
+	record: payload.id
+}	
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d699d473-2475-4d3f-8ad5-afc4102ccdc2" />
+	</flow>
+</mule>

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_0f37b841_d666_4e09_ab35_80ca7c6b37ff_Output_Payload = Array<{  Zip: Number,   phoneNumber: Number,   organizationName: String,   Address: String,   State: String,   Revenue: Number,   City: String,   _?: Any}>
+

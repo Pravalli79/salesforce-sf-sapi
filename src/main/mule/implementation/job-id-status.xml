@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="jobStatus" doc:id="2c9901f3-6a19-495f-bec6-129cbc688d1e" >
+		<logger level="INFO" doc:name="Logger" doc:id="f5a62009-f20f-4b0c-89d3-f9a9e42124c1" />
+		<salesforce:get-job-state-bulk-api-v2 doc:name="get JobId status" doc:id="cb003ed2-5e72-434f-bcf3-b4fc54058ed7" config-ref="Salesforce_Config" id="#[vars.jobId]"/>
+		<ee:transform doc:name="Transform Message" doc:id="5df45cb6-2473-4797-80e4-109bfd9159b6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	jobId: payload.id,
+	status: payload.state
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+<!-- [STUDIO:"Transform Message"]		<ee:transform doc:name="Transform Message" doc:id="ded8219c-7ee1-46ad-b857-f01c769586e5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var states = {
+	"Open": "on going",
+	"JobComplete": "complete",
+	"Aborted": "aborted",
+	"Failed": "failed"
+}
+fun getStatus(state) = states[state&#93;
+&#45;&#45;-
+{
+	jobId: vars.id,
+	status: payload.state
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform> [STUDIO] -->
+		<logger level="INFO" doc:name="Logger" doc:id="ee4ec1d5-bd9a-479d-8a2f-1c770aa62d6b" />
+	</flow>
+</mule>

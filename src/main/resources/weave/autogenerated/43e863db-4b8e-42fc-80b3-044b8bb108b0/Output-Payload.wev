@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_43e863db_4b8e_42fc_80b3_044b8bb108b0_Output_Payload = {
+  Zip: Number, 
+  phoneNumber: Number, 
+  organizationName: String, 
+  Address: String, 
+  State: String, 
+  Revenue: Number, 
+  City: String, 
+  _?: Any
+}
+

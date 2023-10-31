@@ -1,0 +1,17 @@
+%dw 2.0
+
+type auto_91746120_bc17_407b_91f4_ef218e40b3d5_Output_Payload = {
+  errorMesssage: String, 
+  record: {
+    Zip: Number, 
+    phoneNumber: Number, 
+    organizationName: String, 
+    Address: String, 
+    State: String, 
+    Revenue: Number, 
+    City: String, 
+    _?: Any
+  }, 
+  _?: Any
+}
+

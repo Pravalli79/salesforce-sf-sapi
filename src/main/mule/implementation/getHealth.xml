@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="getHealthFlow" doc:id="becbf702-9d4d-4d64-9b44-5890af7c173c" >
+		<logger level="INFO" doc:name="Logger" doc:id="e4652467-52da-4724-97d9-e15453e5d3c2" />
+		<try doc:name="Try" doc:id="516e7680-1777-4a81-8e64-470de57865ce" >
+			<salesforce:get-server-timestamp doc:name="Get server timestamp" doc:id="46594a84-0e01-4d43-9629-175db9a2aba7" config-ref="Salesforce_Config" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6584be0f-dd0c-44bd-8148-bbf53b6f13d6" >
+					<logger level="INFO" doc:name="error" doc:id="9cf2c0f7-39ef-443c-a19f-31cbd33cb2b2" message="not retrieving timestamp"/>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="3d00a650-6283-4e2d-8fae-ea64a9c1f00b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: if(isEmpty(payload)) "not running" else "running",
+	timestamp: now() as DateTime
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="178eb17b-21a8-467a-b064-2327f7faa2a5" />
+	</flow>
+</mule>
